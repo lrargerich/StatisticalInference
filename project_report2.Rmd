@@ -1,0 +1,70 @@
+---
+title: "Statistical Inference Project 2"
+author: "Frog"
+date: "Wednesday, August 06, 2014"
+output: html_document
+---
+
+### 1. Load the ToothGrowth data and perform some basic exploratory data analyses 
+
+```{r}
+library(ggplot2)
+data(ToothGrowth)
+str(ToothGrowth)
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+qplot(jitter(as.numeric(ToothGrowth$supp)),jitter(as.numeric(ToothGrowth$dose)),
+      size=ToothGrowth$len,ylab="dose",xlab="supp")
+```
+
+We can see that as the dose increases the length of the teeth increases but comparing the
+same dose levels it is difficult to see if the supplement type has an effect. It seems that
+the supllement type OJ (factor level 1) produces slightly longer teeth than supplement 
+VC (factor level 2)
+
+### 2. Provide a basic summary of the data.
+
+```{r}
+summary(ToothGrowth)
+```
+
+You ask it, you got it. 
+
+### 3. Use confidence intervals and hypothesis tests to compare tooth growth by supp and dose. 
+
+First I would like to test if the dose has an effect so I will split the dataset in just two
+parts: dose==0.5 and dose==2 to compare the higher and lower doses and its effect on Teeth length.
+
+```{r}
+group1<-ToothGrowth[ToothGrowth$dose==0.5,1]
+group2<-ToothGrowth[ToothGrowth$dose==2,1]
+```
+
+Now I perform a t test assuming the groups are not paired 
+
+```{r}
+t.test(group1,group2,paired=FALSE)
+```
+
+We can see that the dose effectively has an effect in tooth growth
+
+Now I do the same for the supplement type
+
+```{r}
+group1<-ToothGrowth[ToothGrowth$supp=="VC",1]
+group2<-ToothGrowth[ToothGrowth$supp=="OJ",1]
+```
+
+I repeat the same test
+
+```{r}
+t.test(group1,group2,paired=FALSE)
+```
+
+We can also see there is a difference in means so the supplement type also has a role.
+
+### 4. State your conclusions and the assumptions needed for your conclusions. 
+
+I assumed the tests were done in different populations and that the population size is
+enough to draw conclusions.
+
+My conclusions is that if you have a tendece to vampirism then you should take supplement OJ.

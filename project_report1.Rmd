@@ -1,0 +1,74 @@
+---
+title: "Statistical Inference Project 1"
+author: "Frog"
+date: "Wednesday, August 06, 2014"
+output: html_document
+---
+
+## Part 1: Simulation of Averages of an Exponential Distribution
+
+In this excercise we are asked to simulate the average of 40 draws from an exponential
+distribution with lambda=0.2. I decided to do 10.000 simulations of this.
+
+```{r}
+g=c()
+lambda = 0.2
+
+for (i in 1:10000) {
+    r<-mean(rexp(40,lambda))
+    g=c(g,r)
+}
+
+gd<-as.data.frame(g)
+```
+
+### 1. Show where the distribution is centered at and compare it to the theoretical center of the distribution.
+
+```{r}
+mean(g)
+1/lambda
+```
+
+The theoretial mean of the exponential distribution is 1/lambda so we can see that the mean
+of the simulated averages has the same mean as the original distribution.
+
+### 2. Show how variable it is and compare it to the theoretical variance of the distribution.
+
+```{r}
+1/lambda  # sd of exponential
+1/lambda / sqrt(40) # theoretical sd of simulation
+sd(g) # sd of simulation
+```
+
+We see that the variation of the averages follows the de Moivre equation depending on the square
+root of the sample size. In other words it is narrower than the original variation of the distribution. Here we are using standard deviation. Variation is the same but squared.
+
+### 3. Show that the distribution is approximately normal.
+
+Aha! That I can do.
+
+```{r}
+library(ggplot2)
+ggplot(gd,aes(x=g)) + geom_histogram(aes(y=..density..),binwidth=.5,colour="black",fill="white") +
+    geom_density(alpha=.2,fill="#FF6666") +
+    geom_vline(aes(xintercept=mean(g, na.rm=T)),   # Ignore NA values for mean
+               color="red", linetype="dashed", size=1) +
+    scale_x_continuous(breaks=seq(0,60,5)) +
+    stat_function(colour="green",geom="line", fun=dnorm, arg=list(mean=1/0.2, sd=0.79))
+```
+
+We see that the distribution has a normal shape. I overlayed a normal distribution (green) to show
+how close it is, they are almost the same curves!
+
+WE can also see that the distribution of the averages of the 40 exponential draws is centered in 5
+which is the same theoretical mean as the exponential distribution (1/lambda).
+
+### 4. Evaluate the coverage of the confidence interval for 1/lambda: x+/- 1.96 s/sqrt(n)
+
+```{r}
+pt(1.96,39)
+```
+
+The confidence for the interval is about 97%
+
+Thank you for reading and see you in the next course!
